@@ -1,6 +1,15 @@
 export default {
-  gameWidth: 760,
-  gameHeight: 400,
   localStorageName: 'phaseres6webpack',
-  webfonts: ['Bangers']
+  currentLevel: 1,
+  colorOrange: '#ff9966',
+  colorYellow: '#ffffcc',
+  colorGreen: '#99cc99',
+  level1: [
+  [0, 1, 1, 5],
+  [2, 2, 1, 3],
+  [3, 3, 3, 1],
+  [1, 1, 2, 3]
+  ],
+  level2: [
+  ]
 }

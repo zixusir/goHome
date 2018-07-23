@@ -7,27 +7,23 @@ import SplashState from './states/Splash'
 import GameState from './states/Game'
 
 import config from './config'
+import eruda from 'eruda'
+eruda.init()
 
-class Game extends Phaser.Game {
-  constructor () {
-    const docElement = document.documentElement
-    const width = docElement.clientWidth > config.gameWidth ? config.gameWidth : docElement.clientWidth
-    const height = docElement.clientHeight > config.gameHeight ? config.gameHeight : docElement.clientHeight
+let game
 
-    super(width, height, Phaser.CANVAS, 'content', null)
+const docElement = document.documentElement
+const width = docElement.clientWidth
+const height = docElement.clientHeight
 
-    this.state.add('Boot', BootState, false)
-    this.state.add('Splash', SplashState, false)
-    this.state.add('Game', GameState, false)
-
-    // with Cordova with need to wait that the device is ready so we will call the Boot state in another file
-    if (!window.cordova) {
-      this.state.start('Boot')
-    }
-  }
+window.onload = function () {
+  game = new Phaser.Game(width, height, Phaser.CANVAS, 'content', null)
+  game.state.add('Boot', BootState, false)
+  game.state.add('Splash', SplashState, false)
+  game.state.add('Game', GameState, false)
+  
+  game.state.start('Boot')
 }
-
-window.game = new Game()
 
 if (window.cordova) {
   var app = {
