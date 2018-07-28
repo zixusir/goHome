@@ -4,7 +4,9 @@ import Mushroom from '../sprites/Mushroom'
 import Config from '../config'
 
 export default class extends Phaser.State {
-  init () {}
+  init () {
+    this.stage.backgroundColor = Config.colorGreen
+  }
   preload () {
     this.map = Config['level' + Config.currentLevel]
     this.tx1 = null
@@ -48,13 +50,14 @@ export default class extends Phaser.State {
       tx2.text = stime
       if (stime === 0) {
         this.createShade(this.map)
+        tx2.text = ''
       }
     }, this)
   }
 
   render () {
     if (__DEV__) {
-      this.game.debug.spriteInfo(this.mushroom, 32, 32)
+      // this.game.debug.spriteInfo(this.mushroom, 32, 32)
     }
   }
 
@@ -155,8 +158,8 @@ export default class extends Phaser.State {
       //console.log(`ex: ${target.x}, ey: ${target.y}`)
       enx = target.x
       eny = target.y
-      
-      if(Math.abs(eny - sty) > Math.abs(enx - stx)) {
+
+      if (Math.abs(eny - sty) > Math.abs(enx - stx)) {
         if (eny - sty > 0) {
           this.moveTo('down')
         } else {
@@ -178,58 +181,75 @@ export default class extends Phaser.State {
     this.add.tween(this.tx1).to({ y: this.game.world.centerY, alpha: 0 }, 4000, Phaser.Easing.Bounce.Out, true)
     this.add.tween(this.mapArr[0][0]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
   }
-  
+
   moveTo (target) {
     console.log(target)
     switch (target) {
       case 'up':
-      if (this.any > 0) {
-        let tw1 = this.add.tween(this.an).to({x: this.an.x, y: this.an.y - this.dey}, 1000, Phaser.Easing.Linear.None, true)
-        this.game.inputEnabled = false
-        tw1.onComplete.addOnce(() => {
-          this.game.input.enabled = true
-        })
-        this.any = this.any - 1
-        this.add.tween(this.mapArr[this.any][this.anx]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
-
-      }
-      break
+        if (this.any > 0) {
+          this.an.loadTexture('an5')
+          let tw1 = this.add.tween(this.an).to({x: this.an.x, y: this.an.y - this.dey}, 200, Phaser.Easing.Linear.None, true)
+          this.game.input.enabled = false
+          tw1.onComplete.addOnce(() => {
+            this.game.input.enabled = true
+            this.checkState(this.anx, this.any)
+          })
+          this.any = this.any - 1
+          this.add.tween(this.mapArr[this.any][this.anx]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
+        }
+        break
       case 'down':
-      if (this.any < this.map.length) {
-        let tw2 = this.add.tween(this.an).to({x: this.an.x, y: this.an.y + this.dey}, 1000, 'Linear', true)
-        this.game.inputEnabled = false
-        tw2.onComplete.addOnce(() => {
-          this.game.inputEnabled = true
-        })
-        this.any = this.any + 1
-        this.add.tween(this.mapArr[this.any][this.anx]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
+        if (this.any < this.map.length - 1) {
+          this.an.loadTexture('an5')
+          let tw2 = this.add.tween(this.an).to({x: this.an.x, y: this.an.y + this.dey}, 200, 'Linear', true)
+          this.game.input.enabled = false
+          tw2.onComplete.addOnce(() => {
+            this.game.input.enabled = true
+            this.checkState(this.anx, this.any)
+          })
+          this.any = this.any + 1
+          console.log(this.any)
+          this.add.tween(this.mapArr[this.any][this.anx]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
 
         // console.log(this.an.y)
-      }
-      break
+        }
+        break
       case 'right':
-      if (this.any < this.map[0].length) {
-        let tw3 = this.add.tween(this.an).to({x: this.an.x + this.dex, y: this.an.y}, 1000, 'Linear', true)
-        this.game.inputEnabled = false
-        tw3.onComplete.addOnce(() => {
-          this.game.input.enabled = true
-        })
-        this.anx = this.anx + 1
-        this.add.tween(this.mapArr[this.any][this.anx]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
-      }
-      break
+        if (this.anx < this.map[0].length - 1) {
+          this.an.loadTexture('an2')
+          let tw3 = this.add.tween(this.an).to({x: this.an.x + this.dex, y: this.an.y}, 200, 'Linear', true)
+          this.game.input.enabled = false
+          tw3.onComplete.addOnce(() => {
+            this.game.input.enabled = true
+            this.checkState(this.anx, this.any)
+          })
+          this.anx = this.anx + 1
+          this.add.tween(this.mapArr[this.any][this.anx]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
+        }
+        break
       case 'left':
-      if (this.anx > 0) {
-        let tw4 = this.add.tween(this.an).to({x: this.an.x - this.dex, y: this.an.y}, 1000, Phaser.Easing.Linear.None, true)
-        this.game.inputEnabled = false
-        tw4.onComplete.addOnce(() => {
-          this.game.inputEnabled = true
-        })
-        this.anx = this.anx - 1
-        this.add.tween(this.mapArr[this.any][this.anx]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
-
-      }
-      break
+        if (this.anx > 0) {
+          this.an.loadTexture('an2_1')
+          let tw4 = this.add.tween(this.an).to({x: this.an.x - this.dex, y: this.an.y}, 200, Phaser.Easing.Linear.None, true)
+          this.game.input.enabled = false
+          tw4.onComplete.addOnce(() => {
+            this.game.input.enabled = true
+            this.checkState(this.anx, this.any)
+          })
+          this.anx = this.anx - 1
+          this.add.tween(this.mapArr[this.any][this.anx]).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true)
+        }
+        break
+    }
+  }
+  checkState (x, y) {
+    // console.log(`x:${x}, y:${y}`)
+    if (this.map[y][x] === 2 || this.map[y][x] === 3 || this.map[y][x] === 4) {
+      console.log('you lose')
+      this.state.start('Lose')
+    } else if (this.map[y][x] === 5) {
+      console.log('you win')
+      this.state.start('Win')
     }
   }
 }
